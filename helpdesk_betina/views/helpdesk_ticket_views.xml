@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- creo la vista para el la vista tree -->
+<record id="view_helpdesk_ticket_tree" model="ir.ui.view">
+  <field name="name">view.helpdesk_ticket.tree</field>
+  <field name="model">helpdesk.ticket</field>
+  <field name="arch" type="xml">
+    <tree string='Tickects'>
+        <field name="name"/>
+        <field name="date"/>
+        <field name="state"/>
+    </tree>
+  </field>
+</record>
+
+
+
+<!-- creo la vista para el la vista formulario -->
+<record id="view_helpdesk_ticket_form" model="ir.ui.view">
+  <field name="name">view.helpdesk_ticket.form</field>
+  <field name="model">helpdesk.ticket</field>
+  <field name="arch" type="xml">
+    <form string='label'>
+      <header>
+        <button string="Assign" name="set_assigned" type="object" attrs="{'invisible': [('state', '!=','new')]}"/>  <!-- Este boton va a poner a true el valor del campo assigned y cuando queda en boton assigned desaparece el boton-->
+        <button string="Progress" name="set_progress" type="object" states ='assigned'/> <!-- Este boton va a poner a true el valor del campo progress y cuando queda en boton assigned desaparece el boton-->
+        <button string="Waiting" name="set_waiting" type="object"  states ='assigned,progress'/> <!-- Este boton va a poner a true el valor del campo waiting y cuando queda en boton assigned desaparece el boton-->
+        <button string="Done" name="set_done" type="object" class="oe_hightlight" states ='assigned,progress,waiting'/> <!-- Este boton va a poner a true el valor del campo done y cuando queda en boton assigned desaparece el boton-->
+        <button string="Cancel" name="set_cancel" type="object" states ='assigned,progress,waiting,done'/> <!-- Este boton va a poner a true el valor del campo cancel y cuando queda en boton assigned desaparece el boton-->
+        <field name="state" widget="statusbar" statusbar_visible="new,done"/> <!-- Esta es la barra con los estados, que aparecerá arriba-->
+      </header>
+      <sheet>
+        <div>
+          <h1>
+            Ticket #<field name="name" class="oe_inline"/> <!--Puedo meter texto a pelo como "Ticket #...." -->
+          </h1>
+        </div>
+        <group name="left">
+          <field name="date"/>
+          <field name="date_due"/>
+        </group>
+        <group name="right">
+          <field name="user_id" />
+          <field name="assigned"/>
+          <field name="dedicated_time"/>
+        </group>
+        <notebook>
+            <page string="Main"> <!--esto son pestañas -->
+              <group string="Description"> <!-- de esta manera le pone el titulo arriba y no le pone la etiqueta del nombre del campo -->
+                  <field name="description" nolabel="1" />
+              </group>
+            </page>
+            <page string="Quality">
+                <group string="Corrective Action">
+                    <field name="corrective_action" nolabel="1" />
+                </group>
+                <group string="Preventive Action">
+                  <field name="preventive_action" nolabel="1" />
+                </group>
+            </page>
+        </notebook>
+      </sheet>
+    </form>
+  </field>
+</record>
+
+  <record id="helpdesk_ticket_action" model="ir.actions.act_window">
+    <field name="name">Tickets</field>
+    <field name="res_model">helpdesk.ticket</field>
+    <field name="view_mode">tree,form</field>
+    <field name="help" type="html">
+      <p class="oe_view_nocontent_create">
+        Click to create a new Tickets.
+      </p>
+    </field>
+  </record>
+
+  <menuitem id="helpdesk_root_menu" name="Helpdesk" sequence="10"/>
+
+  <menuitem id="helpdesk_ticket_main_menu" name="Helpdesk" parent="helpdesk_root_menu"  sequence="10"/>
+
+  <menuitem id="helpdesk_ticket_menu" parent="helpdesk_ticket_main_menu"
+      action="helpdesk_ticket_action" sequence="10"/>
+
+</odoo>
